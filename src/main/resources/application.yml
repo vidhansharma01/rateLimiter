@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: rate-limiter-service
+
+  # ── H2 in-memory DB for rule config store ─────────────────────────────────
+  datasource:
+    url: jdbc:h2:mem:ratelimiterdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  # ── Redis connection ────────────────────────────────────────────────────────
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2000ms          # HLD §10: short timeout → fail open on breach
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 5
+
+# ── Rate limiter config ────────────────────────────────────────────────────
+rate-limiter:
+  rule-cache-ttl-ms: 60000         # Refresh local rule cache every 60 seconds (HLD §6)
+  rule-cache-initial-delay-ms: 0   # Load rules immediately on startup
+
+# ── Actuator + Prometheus ───────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+server:
+  port: 8080
