@@ -7,6 +7,6 @@ package com.rateLimiter.token.config;
 public enum ClientTier {
     FREE,
     PRO,
-    ENTERPRISE,
+    MAX,
     INTERNAL   // whitelisted — rate limiting is skipped
 }

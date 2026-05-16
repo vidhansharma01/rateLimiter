@@ -77,7 +77,7 @@ public class RuleSeedConfig {
                         .build(),
 
                 RateLimitRule.builder()
-                        .clientTier(ClientTier.ENTERPRISE)
+                        .clientTier(ClientTier.MAX)
                         .endpoint("/api/search")
                         .limitCount(2000)
                         .windowSec(60)
